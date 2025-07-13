@@ -1,0 +1,123 @@
+name: 'Detect Affected Packages'
+description: 'Detect packages affected by changes using NX'
+
+inputs:
+  package:
+    description: 'Optional specific package to include (for manual triggers)'
+    required: false
+    default: ''
+
+outputs:
+  packages:
+    description: 'JSON array of affected packages'
+    value: ${{ steps.detect.outputs.packages }}
+  has-packages:
+    description: 'Whether any packages were affected'
+    value: ${{ steps.detect.outputs.has-packages }}
+  package-count:
+    description: 'Number of affected packages'
+    value: ${{ steps.detect.outputs.package-count }}
+  package-groups:
+    description: 'JSON object mapping packages to their groups'
+    value: ${{ steps.detect.outputs.package-groups }}
+  lint-packages:
+    description: 'JSON array of affected packages with lint target'
+    value: ${{ steps.detect.outputs.lint-packages }}
+  has-lint-packages:
+    description: 'Whether any packages have lint target'
+    value: ${{ steps.detect.outputs.has-lint-packages }}
+  test-packages:
+    description: 'JSON array of affected packages with test target'
+    value: ${{ steps.detect.outputs.test-packages }}
+  has-test-packages:
+    description: 'Whether any packages have test target'
+    value: ${{ steps.detect.outputs.has-test-packages }}
+  build-packages:
+    description: 'JSON array of affected packages with build target'
+    value: ${{ steps.detect.outputs.build-packages }}
+  has-build-packages:
+    description: 'Whether any packages have build target'
+    value: ${{ steps.detect.outputs.has-build-packages }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Detect affected packages
+      id: detect
+      shell: bash
+      run: |
+        # Handle manual package input
+        if [ -n "${{ inputs.package }}" ]; then
+          echo "🎯 Manual package specified: ${{ inputs.package }}"
+          AFFECTED="[\"${{ inputs.package }}\"]"
+        else
+          # Get affected projects with publish target
+          AFFECTED=$(nx show projects --affected --json || echo '[]')
+        fi
+        echo "🔍 Affected packages detected: $AFFECTED"
+
+        if [ "$AFFECTED" = "[]" ] || [ -z "$AFFECTED" ]; then
+          echo "packages=[]" >> $GITHUB_OUTPUT
+          echo "has-packages=false" >> $GITHUB_OUTPUT
+          echo "package-count=0" >> $GITHUB_OUTPUT
+          echo "lint-packages=[]" >> $GITHUB_OUTPUT
+          echo "has-lint-packages=false" >> $GITHUB_OUTPUT
+          echo "test-packages=[]" >> $GITHUB_OUTPUT
+          echo "has-test-packages=false" >> $GITHUB_OUTPUT
+          echo "build-packages=[]" >> $GITHUB_OUTPUT
+          echo "has-build-packages=false" >> $GITHUB_OUTPUT
+          echo "ℹ️ No affected packages found"
+        else
+          PACKAGE_COUNT=$(echo $AFFECTED | jq length)
+          echo "packages=$AFFECTED" >> $GITHUB_OUTPUT
+          echo "has-packages=true" >> $GITHUB_OUTPUT
+          echo "package-count=$PACKAGE_COUNT" >> $GITHUB_OUTPUT
+          
+          # Create target-specific matrices
+          LINT_PACKAGES=$(nx show projects --affected --with-target lint --json || echo '[]')
+          TEST_PACKAGES=$(nx show projects --affected --with-target test --json || echo '[]')
+          BUILD_PACKAGES=$(nx show projects --affected --with-target build --json || echo '[]')
+          
+          echo "🔍 Lint packages: $LINT_PACKAGES"
+          echo "🧪 Test packages: $TEST_PACKAGES"
+          echo "🏗️ Build packages: $BUILD_PACKAGES"
+          
+          echo "lint-packages=$LINT_PACKAGES" >> $GITHUB_OUTPUT
+          echo "has-lint-packages=$([ $(echo $LINT_PACKAGES | jq length) -gt 0 ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "test-packages=$TEST_PACKAGES" >> $GITHUB_OUTPUT
+          echo "has-test-packages=$([ $(echo $TEST_PACKAGES | jq length) -gt 0 ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "build-packages=$BUILD_PACKAGES" >> $GITHUB_OUTPUT
+          echo "has-build-packages=$([ $(echo $BUILD_PACKAGES | jq length) -gt 0 ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          
+
+          # Map packages to their groups from nx.json
+          PACKAGE_GROUPS=$(jq -n '{}')
+          
+          # Get all group names from nx.json
+          for group in $(jq -r '.release.groups | keys[]' nx.json); do
+            echo "🔍 Checking group: $group"
+            
+            # Get projects array for this group
+            projects=$(jq -r --arg grp "$group" '.release.groups[$grp].projects[]' nx.json)
+            
+            for project_pattern in $projects; do
+              echo "  📋 Pattern: $project_pattern"
+              
+              # Check each affected package against this pattern
+              for package in $(echo $AFFECTED | jq -r '.[]'); do
+                # Handle glob patterns (like nx-*) and exact matches
+                if [[ $package == $project_pattern ]]; then
+                  PACKAGE_GROUPS=$(echo $PACKAGE_GROUPS | jq --arg pkg "$package" --arg grp "$group" '. + {($pkg): $grp}')
+                  echo "    ✅ Package $package matches pattern $project_pattern → group: $group"
+                fi
+              done
+            done
+          done
+          
+          echo "package-groups=$(echo $PACKAGE_GROUPS | jq -c .)" >> $GITHUB_OUTPUT
+          echo "🔍 github output: $(cat $GITHUB_OUTPUT)  \n\n\n📋END OF GITHUB OUTPUT\n\n\n"
+
+          echo "🎯 Found $PACKAGE_COUNT affected packages"
+          echo "📋 Packages: $AFFECTED"
+          echo "🏷️ Package groups: $PACKAGE_GROUPS"
+        fi
