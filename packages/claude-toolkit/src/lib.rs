@@ -19,9 +19,9 @@ mod tests {
     #[test]
     fn test_library_modules_exist() {
         // Test that all modules can be imported
-        let _memory = memory::memory_system::new();
-        let _desktop = desktop::desktop_manager::new();
-        let _daemon = daemon::daemon_service::new();
-        let _installer = installer::hooks_installer::new();
+        let _memory = memory::MemorySystem::new();
+        let _desktop = desktop::DesktopManager::new();
+        let _daemon = daemon::DaemonService::new();
+        let _installer = installer::HooksInstaller::new();
     }
 }

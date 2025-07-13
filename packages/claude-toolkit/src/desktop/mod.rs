@@ -3,18 +3,18 @@
 
 use colored::*;
 
-pub struct desktop_manager {
+pub struct DesktopManager {
     // TODO: Add MCP server management
     // TODO: Add desktop integration features
 }
 
-impl Default for desktop_manager {
+impl Default for DesktopManager {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl desktop_manager {
+impl DesktopManager {
     pub fn new() -> Self {
         Self {}
     }

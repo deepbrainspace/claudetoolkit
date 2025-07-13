@@ -3,18 +3,18 @@
 
 use colored::*;
 
-pub struct daemon_service {
+pub struct DaemonService {
     // TODO: Add background monitoring
     // TODO: Add automated task scheduling
 }
 
-impl Default for daemon_service {
+impl Default for DaemonService {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl daemon_service {
+impl DaemonService {
     pub fn new() -> Self {
         Self {}
     }

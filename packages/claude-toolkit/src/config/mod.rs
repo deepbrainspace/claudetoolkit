@@ -5,17 +5,17 @@ use std::path::PathBuf;
 use tokio::fs;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct claude_config {
-    pub hooks: HashMap<String, hook_config>,
-    pub mcp_servers: Option<HashMap<String, mcp_server_config>>,
-    pub settings: Option<global_settings>,
+pub struct ClaudeConfig {
+    pub hooks: HashMap<String, HookConfig>,
+    pub mcp_servers: Option<HashMap<String, McpServerConfig>>,
+    pub settings: Option<GlobalSettings>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct hook_config {
+pub struct HookConfig {
     pub command: String,
     pub description: String,
-    pub trigger: hook_trigger,
+    pub trigger: HookTrigger,
     pub enabled: Option<bool>,
     pub environment: Option<HashMap<String, String>>,
     pub timeout: Option<u64>, // seconds
@@ -23,7 +23,7 @@ pub struct hook_config {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
-pub enum hook_trigger {
+pub enum HookTrigger {
     Manual,
     PreCommit,
     PostCommit,
@@ -36,65 +36,65 @@ pub enum hook_trigger {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct mcp_server_config {
+pub struct McpServerConfig {
     pub command: String,
     pub args: Option<Vec<String>>,
     pub env: Option<HashMap<String, String>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct global_settings {
+pub struct GlobalSettings {
     pub debug: Option<bool>,
     pub log_level: Option<String>,
     pub auto_install: Option<bool>,
     pub claude_binary_path: Option<String>,
 }
 
-impl Default for claude_config {
+impl Default for ClaudeConfig {
     fn default() -> Self {
         let mut hooks = HashMap::new();
         
         // Default hook configurations
-        hooks.insert("pr-enhance".to_string(), hook_config {
+        hooks.insert("pr-enhance".to_string(), HookConfig {
             command: "claude-toolkit pr-enhance".to_string(),
             description: "Enhance pull requests with AI analysis".to_string(),
-            trigger: hook_trigger::Manual,
+            trigger: HookTrigger::Manual,
             enabled: Some(true),
             environment: None,
             timeout: Some(300), // 5 minutes
         });
 
-        hooks.insert("commit-assist".to_string(), hook_config {
+        hooks.insert("commit-assist".to_string(), HookConfig {
             command: "claude-toolkit commit-assist --generate".to_string(),
             description: "Generate commit messages from staged changes".to_string(),
-            trigger: hook_trigger::PreCommit,
+            trigger: HookTrigger::PreCommit,
             enabled: Some(true),
             environment: None,
             timeout: Some(60), // 1 minute
         });
 
-        hooks.insert("ci-monitor".to_string(), hook_config {
+        hooks.insert("ci-monitor".to_string(), HookConfig {
             command: "claude-toolkit ci-monitor --notify".to_string(),
             description: "Monitor CI/CD pipeline status".to_string(),
-            trigger: hook_trigger::Manual,
+            trigger: HookTrigger::Manual,
             enabled: Some(true),
             environment: None,
             timeout: Some(1800), // 30 minutes
         });
 
-        hooks.insert("branch-manager".to_string(), hook_config {
+        hooks.insert("branch-manager".to_string(), HookConfig {
             command: "claude-toolkit branch-manager".to_string(),
             description: "Manage branches with intelligent suggestions".to_string(),
-            trigger: hook_trigger::Manual,
+            trigger: HookTrigger::Manual,
             enabled: Some(true),
             environment: None,
             timeout: Some(120), // 2 minutes
         });
 
-        hooks.insert("nx-optimizer".to_string(), hook_config {
+        hooks.insert("nx-optimizer".to_string(), HookConfig {
             command: "claude-toolkit nx-optimizer --suggest".to_string(),
             description: "Optimize NX workspace operations".to_string(),
-            trigger: hook_trigger::Manual,
+            trigger: HookTrigger::Manual,
             enabled: Some(true),
             environment: None,
             timeout: Some(180), // 3 minutes
@@ -103,7 +103,7 @@ impl Default for claude_config {
         let mut mcp_servers = HashMap::new();
         
         // Default MCP servers
-        mcp_servers.insert("filesystem".to_string(), mcp_server_config {
+        mcp_servers.insert("filesystem".to_string(), McpServerConfig {
             command: "npx".to_string(),
             args: Some(vec![
                 "-y".to_string(),
@@ -113,7 +113,7 @@ impl Default for claude_config {
             env: None,
         });
 
-        mcp_servers.insert("memory".to_string(), mcp_server_config {
+        mcp_servers.insert("memory".to_string(), McpServerConfig {
             command: "npx".to_string(),
             args: Some(vec![
                 "-y".to_string(),
@@ -125,7 +125,7 @@ impl Default for claude_config {
         Self {
             hooks,
             mcp_servers: Some(mcp_servers),
-            settings: Some(global_settings {
+            settings: Some(GlobalSettings {
                 debug: Some(false),
                 log_level: Some("info".to_string()),
                 auto_install: Some(true),
@@ -135,14 +135,14 @@ impl Default for claude_config {
     }
 }
 
-impl claude_config {
+impl ClaudeConfig {
     pub async fn load_or_create(path: &PathBuf) -> Result<Self> {
         if path.exists() {
             let content = fs::read_to_string(path).await?;
-            let config: claude_config = serde_yaml::from_str(&content)?;
+            let config: ClaudeConfig = serde_yaml::from_str(&content)?;
             Ok(config)
         } else {
-            let default_config = claude_config::default();
+            let default_config = ClaudeConfig::default();
             default_config.save(path).await?;
             Ok(default_config)
         }
@@ -166,7 +166,7 @@ impl claude_config {
             .join("claude-toolkit.yml")
     }
 
-    pub fn get_hook(&self, name: &str) -> Option<&hook_config> {
+    pub fn get_hook(&self, name: &str) -> Option<&HookConfig> {
         self.hooks.get(name)
     }
 
@@ -184,7 +184,7 @@ mod tests {
 
     #[test]
     fn test_claude_config_default() {
-        let config = claude_config::default();
+        let config = ClaudeConfig::default();
         
         // Test that all 5 priority hooks are configured
         assert!(config.hooks.contains_key("pr-enhance"));
@@ -209,7 +209,7 @@ mod tests {
 
     #[test]
     fn test_hook_enabled_check() {
-        let config = claude_config::default();
+        let config = ClaudeConfig::default();
         
         // Test enabled hooks
         assert!(config.is_hook_enabled("pr-enhance"));
@@ -221,7 +221,7 @@ mod tests {
 
     #[test]
     fn test_get_hook() {
-        let config = claude_config::default();
+        let config = ClaudeConfig::default();
         
         let pr_hook = config.get_hook("pr-enhance");
         assert!(pr_hook.is_some());
@@ -236,21 +236,21 @@ mod tests {
         let temp_dir = tempdir().unwrap();
         let config_path = temp_dir.path().join("test-config.yml");
         
-        let original_config = claude_config::default();
+        let original_config = ClaudeConfig::default();
         original_config.save(&config_path).await.unwrap();
         
         // Verify file exists
         assert!(config_path.exists());
         
         // Load and verify
-        let loaded_config = claude_config::load_or_create(&config_path).await.unwrap();
+        let loaded_config = ClaudeConfig::load_or_create(&config_path).await.unwrap();
         assert_eq!(loaded_config.hooks.len(), original_config.hooks.len());
         assert!(loaded_config.hooks.contains_key("pr-enhance"));
     }
 
     #[test]
     fn test_config_path() {
-        let path = claude_config::get_config_path();
+        let path = ClaudeConfig::get_config_path();
         assert!(path.ends_with(".claude/claude-toolkit.yml"));
     }
 }

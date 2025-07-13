@@ -95,14 +95,14 @@ settings:
 
 ### Naming Conventions
 
-This project follows strict `snake_case` naming conventions:
+This project follows standard Rust naming conventions:
 
-- **Structs/Enums**: `snake_case` (project preference for consistency)
+- **Structs/Enums**: `PascalCase` (Rust standard)
 
   ```rust
-  pub struct memory_system { }
-  pub struct claude_config { }
-  pub enum hook_trigger { }
+  pub struct MemorySystem { }
+  pub struct ClaudeConfig { }
+  pub enum HookTrigger { }
   ```
 
 - **Functions/Variables**: `snake_case`
@@ -110,7 +110,7 @@ This project follows strict `snake_case` naming conventions:
   ```rust
   pub fn install_hooks() { }
   let config_path = get_path();
-  let hooks_installer = hooks_installer::new();
+  let hooks_installer = HooksInstaller::new();
   ```
 
 - **Constants**: `SCREAMING_SNAKE_CASE`
@@ -129,7 +129,7 @@ This project follows strict `snake_case` naming conventions:
     claude_config.rs
   ```
 
-**Rationale**: Consistency across the entire codebase reduces cognitive load and prevents confusion between different naming styles. While Rust typically uses `PascalCase` for structs, this project prioritizes consistency over convention.
+**Rationale**: Following Rust's official naming conventions ensures consistency with the broader Rust ecosystem and prevents linting warnings.
 
 ### Build Commands
 
