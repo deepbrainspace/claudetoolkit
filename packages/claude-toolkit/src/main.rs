@@ -186,7 +186,7 @@ async fn config_show() -> anyhow::Result<()> {
     let yaml_content = serde_yaml::to_string(&config)?;
     
     println!("  {} Current configuration:", "📄".green());
-    println!("\n{}", yaml_content);
+    println!("\n{yaml_content}");
     Ok(())
 }
 
@@ -221,7 +221,7 @@ async fn config_validate() -> anyhow::Result<()> {
         }
         Err(e) => {
             println!("  {} Configuration validation failed:", "✗".red().italic());
-            println!("    {}", e);
+            println!("    {e}");
         }
     }
     Ok(())
