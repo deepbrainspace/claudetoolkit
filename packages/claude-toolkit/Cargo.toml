@@ -6,6 +6,14 @@ description = "Claude Code hooks toolkit for enhanced development workflow"
 authors = ["DeepBrain Space"]
 license = "MIT"
 
+[lints.clippy]
+# Deny all clippy warnings in CI/production
+all = "deny"
+
+[lints.rust]
+# Deny all compiler warnings in CI/production  
+warnings = "deny"
+
 [[bin]]
 name = "claude-toolkit"
 path = "src/main.rs"
