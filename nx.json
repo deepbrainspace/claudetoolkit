@@ -1,3 +1,39 @@
 {
-  "$schema": "./node_modules/nx/schemas/nx-schema.json"
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint", 
+          "test",
+          "check"
+        ]
+      }
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": ["{workspaceRoot}/nx.json"]
+  },
+  "targetDefaults": {
+    "lint": {
+      "inputs": ["default"],
+      "cache": true
+    },
+    "check": {
+      "inputs": ["default"],
+      "cache": true
+    }
+  },
+  "parallel": 3,
+  "release": {
+    "projectsRelationship": "independent",
+    "groups": {
+      "rust-packages": {
+        "projects": ["claude-toolkit"]
+      }
+    }
+  }
 }
