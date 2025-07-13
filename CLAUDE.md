@@ -16,6 +16,7 @@ This is an early-stage toolkit project. The repository currently contains primar
 Currently no build system is configured. When implemented, follow these preferences:
 
 ### Package Management (Future)
+
 - **PREFER**: NX commands first, then pnpm
 - **AVOID**: npm commands
 - **PREFER**: `nx affected` operations for efficiency
@@ -23,11 +24,13 @@ Currently no build system is configured. When implemented, follow these preferen
 ### Git Operations
 
 **Safety Rules:**
+
 - Always ask permission before branch operations (`git checkout`, `git switch`, branch creation)
 - Never use force flags without explicit approval
 - Never bypass git hooks or use `--no-verify`
 
 **Commit Standards:**
+
 - Use conventional commits: `type: description` or `type(scope): description`
 - Types: feat, fix, chore, docs, test, refactor
 - Use imperative mood: "Add feature" not "Added feature"
@@ -35,12 +38,14 @@ Currently no build system is configured. When implemented, follow these preferen
 - Never add Claude attribution to commits
 
 **Merge Policy:**
+
 - Use regular merge commits (not squash merge)
 - Preserves commit history for semantic versioning
 
 ## Code Quality Rules
 
 ### TypeScript (When Implemented)
+
 - Never use `any` type
 - Use specific types: `string`, `number`, `object`, `unknown`
 - Use `Parameters<typeof func>[0]` for library parameter types
@@ -48,21 +53,33 @@ Currently no build system is configured. When implemented, follow these preferen
 - Proper type assertions: `value as SpecificType`
 
 ### Rust (When Implemented)
+
 - Never run cargo commands from repository root
-- Use NX commands: `nx build claude-code`, `nx test claude-code`
+- Use NX commands: `nx build claude-toolkit`, `nx test claude-toolkit`
 - If using cargo directly, cd to package directory first
+
+**Naming Conventions:**
+
+- **Structs/Enums**: `snake_case` (preferred in this project)
+- **Functions/Variables**: `snake_case`
+- **Constants**: `SCREAMING_SNAKE_CASE`
+- **Files/Modules**: `snake_case`
+- Always use `snake_case` for consistency across the codebase
 
 ## Architecture Principles
 
 When implementing the actual toolkit:
 
 ### Repository Pattern
+
 Follow: Service → Repository → Database
+
 - Never bypass repository layer
 - Keep business logic in Service, data operations in Repository
 - Always rebuild after changes
 
 ### Planning and Implementation
+
 - Create plans in `.claude/plans/` with current date/time for complex tasks
 - Use task lists for user approval during implementation
 - Follow rules in `.claude/rules/` for specific technologies
@@ -70,12 +87,14 @@ Follow: Service → Repository → Database
 ## Critical Rules
 
 **Security and Safety:**
+
 - All tests and lints must pass before release
 - Never skip tests or lints
 - Never commit secrets or sensitive data
 - Never bypass safety mechanisms
 
 **Evidence-Based Development:**
+
 - Always verify facts using tools before making claims
 - Ask for information instead of assuming
 - Use tools to investigate before stating conclusions

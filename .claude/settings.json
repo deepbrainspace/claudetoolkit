@@ -1,0 +1,33 @@
+{
+  "claude-toolkit": {
+    "command": "/home/nsm/code/deepbrain/claudetoolkit/packages/claude-toolkit/target/release/claude-toolkit",
+    "description": "Claude Code hooks toolkit for enhanced development workflow",
+    "hooks": {
+      "branch-manager": {
+        "command": "/home/nsm/code/deepbrain/claudetoolkit/packages/claude-toolkit/target/release/claude-toolkit branch-manager",
+        "description": "Manage branches with intelligent suggestions",
+        "trigger": "manual"
+      },
+      "ci-monitor": {
+        "command": "/home/nsm/code/deepbrain/claudetoolkit/packages/claude-toolkit/target/release/claude-toolkit ci-monitor --notify",
+        "description": "Monitor CI/CD pipeline status",
+        "trigger": "manual"
+      },
+      "commit-assist": {
+        "command": "/home/nsm/code/deepbrain/claudetoolkit/packages/claude-toolkit/target/release/claude-toolkit commit-assist --generate",
+        "description": "Generate commit messages from staged changes",
+        "trigger": "pre-commit"
+      },
+      "nx-optimizer": {
+        "command": "/home/nsm/code/deepbrain/claudetoolkit/packages/claude-toolkit/target/release/claude-toolkit nx-optimizer --suggest",
+        "description": "Optimize NX workspace operations",
+        "trigger": "manual"
+      },
+      "pr-enhance": {
+        "command": "/home/nsm/code/deepbrain/claudetoolkit/packages/claude-toolkit/target/release/claude-toolkit pr-enhance",
+        "description": "Enhance pull requests with AI analysis",
+        "trigger": "manual"
+      }
+    }
+  }
+}
