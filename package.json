@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "nx run-many --target=build --all",
+    "test": "nx run-many --target=test --all",
+    "lint": "nx run-many --target=lint --all", 
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +16,7 @@
   "devDependencies": {
     "@goodiebag/nx-rust": "^3.1.0",
     "@nx/workspace": "^21.2.3",
+    "husky": "^9.1.7",
     "nx": "21.2.3"
   }
 }
