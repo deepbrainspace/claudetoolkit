@@ -3,13 +3,19 @@
 
 use colored::*;
 
-pub struct MemorySystem {
+pub struct memory_system {
     // TODO: Add SurrealDB connection
     // TODO: Add graph database interface  
     // TODO: Add vector storage for embeddings
 }
 
-impl MemorySystem {
+impl Default for memory_system {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl memory_system {
     pub fn new() -> Self {
         Self {}
     }

@@ -10,8 +10,8 @@ mod installer;
 mod config;
 
 use hooks::*;
-use installer::HooksInstaller;
-use config::ClaudeConfig;
+use installer::hooks_installer;
+use config::claude_config;
 
 #[derive(Parser)]
 #[command(
@@ -119,7 +119,7 @@ enum ConfigActions {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
-    let installer = HooksInstaller::new();
+    let installer = hooks_installer::new();
 
     match cli.command {
         Commands::Install { force } => {
@@ -173,7 +173,7 @@ async fn main() -> anyhow::Result<()> {
 }
 
 async fn config_show() -> anyhow::Result<()> {
-    let config_path = ClaudeConfig::get_config_path();
+    let config_path = claude_config::get_config_path();
     println!("  {} Configuration file: {}", "📍".blue(), config_path.display());
     
     if !config_path.exists() {
@@ -182,7 +182,7 @@ async fn config_show() -> anyhow::Result<()> {
         return Ok(());
     }
 
-    let config = ClaudeConfig::load_or_create(&config_path).await?;
+    let config = claude_config::load_or_create(&config_path).await?;
     let yaml_content = serde_yaml::to_string(&config)?;
     
     println!("  {} Current configuration:", "📄".green());
@@ -191,7 +191,7 @@ async fn config_show() -> anyhow::Result<()> {
 }
 
 async fn config_init(force: bool) -> anyhow::Result<()> {
-    let config_path = ClaudeConfig::get_config_path();
+    let config_path = claude_config::get_config_path();
     
     if config_path.exists() && !force {
         println!("  {} Configuration file already exists: {}", "⚠️".yellow(), config_path.display());
@@ -199,7 +199,7 @@ async fn config_init(force: bool) -> anyhow::Result<()> {
         return Ok(());
     }
 
-    let config = ClaudeConfig::default();
+    let config = claude_config::default();
     config.save(&config_path).await?;
     
     println!("  {} Created configuration file: {}", "✓".green().italic(), config_path.display());
@@ -208,14 +208,14 @@ async fn config_init(force: bool) -> anyhow::Result<()> {
 }
 
 async fn config_validate() -> anyhow::Result<()> {
-    let config_path = ClaudeConfig::get_config_path();
+    let config_path = claude_config::get_config_path();
     
     if !config_path.exists() {
         println!("  {} Configuration file not found: {}", "❌".red(), config_path.display());
         return Ok(());
     }
 
-    match ClaudeConfig::load_or_create(&config_path).await {
+    match claude_config::load_or_create(&config_path).await {
         Ok(_) => {
             println!("  {} Configuration is valid", "✓".green().italic());
         }
@@ -228,12 +228,12 @@ async fn config_validate() -> anyhow::Result<()> {
 }
 
 async fn config_edit() -> anyhow::Result<()> {
-    let config_path = ClaudeConfig::get_config_path();
+    let config_path = claude_config::get_config_path();
     
     // Ensure config exists
     if !config_path.exists() {
         println!("  {} Creating default configuration first...", "📝".blue());
-        let config = ClaudeConfig::default();
+        let config = claude_config::default();
         config.save(&config_path).await?;
     }
 

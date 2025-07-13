@@ -97,10 +97,11 @@ settings:
 
 This project follows strict `snake_case` naming conventions:
 
-- **Structs/Enums**: `snake_case` (project preference)
+- **Structs/Enums**: `snake_case` (project preference for consistency)
 
   ```rust
   pub struct memory_system { }
+  pub struct claude_config { }
   pub enum hook_trigger { }
   ```
 
@@ -109,12 +110,14 @@ This project follows strict `snake_case` naming conventions:
   ```rust
   pub fn install_hooks() { }
   let config_path = get_path();
+  let hooks_installer = hooks_installer::new();
   ```
 
 - **Constants**: `SCREAMING_SNAKE_CASE`
 
   ```rust
   const DEFAULT_TIMEOUT: u64 = 300;
+  const MAX_RETRIES: usize = 3;
   ```
 
 - **Files/Modules**: `snake_case`
@@ -122,8 +125,11 @@ This project follows strict `snake_case` naming conventions:
   src/
     memory/mod.rs
     desktop/mod.rs
-    hook_manager.rs
+    hooks_installer.rs
+    claude_config.rs
   ```
+
+**Rationale**: Consistency across the entire codebase reduces cognitive load and prevents confusion between different naming styles. While Rust typically uses `PascalCase` for structs, this project prioritizes consistency over convention.
 
 ### Build Commands
 

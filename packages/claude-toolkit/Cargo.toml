@@ -26,3 +26,6 @@ serde_yaml = "0.9"
 tokio = { version = "1.45", features = ["rt", "rt-multi-thread", "macros", "process", "fs", "io-util"] }  # Latest stable tokio version per Context7
 anyhow = "1.0"
 colored = "2.2"
+
+[dev-dependencies]
+tempfile = "3.8"

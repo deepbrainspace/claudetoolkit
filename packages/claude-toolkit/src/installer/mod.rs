@@ -5,16 +5,22 @@ use colored::*;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use tokio::fs;
-use crate::config::ClaudeConfig;
-use crate::memory::MemorySystem;
-use crate::desktop::DesktopManager;
-use crate::daemon::DaemonService;
+use crate::config::claude_config;
+use crate::memory::memory_system;
+use crate::desktop::desktop_manager;
+use crate::daemon::daemon_service;
 
-pub struct HooksInstaller {
+pub struct hooks_installer {
     claude_settings_path: PathBuf,
 }
 
-impl HooksInstaller {
+impl Default for hooks_installer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl hooks_installer {
     pub fn new() -> Self {
         let claude_settings_path = std::env::current_dir()
             .unwrap_or_else(|_| PathBuf::from("."))
@@ -32,14 +38,14 @@ impl HooksInstaller {
         }
 
         // Step 1: Create claude-toolkit.yml configuration
-        let config_path = ClaudeConfig::get_config_path();
+        let config_path = claude_config::get_config_path();
         
         if config_path.exists() && !force {
             println!("  {} Configuration already exists: {}", "ℹ️".blue(), config_path.display());
             println!("  {} Use --force to overwrite", "💡".yellow());
         } else {
             println!("  {} Creating configuration file: {}", "📝".blue(), config_path.display());
-            let config = ClaudeConfig::default();
+            let config = claude_config::default();
             config.save(&config_path).await?;
             println!("  {} Created .claude/claude-toolkit.yml", "✓".green().italic());
         }
@@ -62,7 +68,7 @@ impl HooksInstaller {
         println!("  {} Uninstalling Claude Code hooks...", "🗑️".yellow());
         
         // Remove claude-toolkit.yml
-        let config_path = ClaudeConfig::get_config_path();
+        let config_path = claude_config::get_config_path();
         if config_path.exists() {
             fs::remove_file(&config_path).await?;
             println!("  {} Removed configuration file", "✓".green().italic());
@@ -175,14 +181,14 @@ impl HooksInstaller {
     }
     
     async fn verify_installation(&self) -> Result<()> {
-        let config_path = ClaudeConfig::get_config_path();
+        let config_path = claude_config::get_config_path();
         
         // Verify claude-toolkit.yml exists and is valid
         if !config_path.exists() {
             anyhow::bail!("Configuration file not found: {}", config_path.display());
         }
         
-        let _config = ClaudeConfig::load_or_create(&config_path).await
+        let _config = claude_config::load_or_create(&config_path).await
             .context("Failed to load configuration file")?;
             
         // Verify Claude Code settings.json exists and has our hooks
@@ -194,7 +200,7 @@ impl HooksInstaller {
         let settings: Value = serde_json::from_str(&content)
             .context("Failed to parse Claude Code settings.json")?;
             
-        if !settings.get("claude-toolkit").is_some() {
+        if settings.get("claude-toolkit").is_none() {
             anyhow::bail!("claude-toolkit configuration not found in settings.json");
         }
         
@@ -203,10 +209,10 @@ impl HooksInstaller {
     }
     
     pub async fn show_status(&self) -> Result<()> {
-        let config_path = ClaudeConfig::get_config_path();
+        let config_path = claude_config::get_config_path();
         
         if config_path.exists() {
-            let config = ClaudeConfig::load_or_create(&config_path).await?;
+            let config = claude_config::load_or_create(&config_path).await?;
             println!("  {} Configuration file: {}", "📍".blue(), config_path.display());
             println!("  {} Claude Code integration: {}", "•".blue(), "Active".green());
             
@@ -232,15 +238,15 @@ impl HooksInstaller {
 
             if let Some(mcp_servers) = &config.mcp_servers {
                 println!("  {} MCP servers configured: {}", "•".blue(), mcp_servers.len().to_string().cyan());
-                for (name, _) in mcp_servers {
+                for name in mcp_servers.keys() {
                     println!("    {} {}", "🔌".blue(), name);
                 }
             }
             
             // Demo usage of other modules to avoid warnings
-            let memory_system = MemorySystem::new();
-            let desktop_manager = DesktopManager::new();
-            let daemon_service = DaemonService::new();
+            let memory_system = memory_system::new();
+            let desktop_manager = desktop_manager::new();
+            let daemon_service = daemon_service::new();
             
             println!("  {} System components initialized", "🔧".blue());
             memory_system.initialize().await?;
