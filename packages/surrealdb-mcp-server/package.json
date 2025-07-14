@@ -20,8 +20,8 @@
     "test": "echo \"No tests specified yet\" && exit 0",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write \"src/**/*.ts\"",
-    "prepare": "npm run build",
-    "version": "npm run format && git add -A src",
+    "prepare": "pnpm run build",
+    "version": "pnpm run format && git add -A src",
     "postversion": "git push && git push --tags",
     "watch": "tsc --watch",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js"

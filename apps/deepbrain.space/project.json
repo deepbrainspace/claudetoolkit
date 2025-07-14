@@ -1,0 +1,36 @@
+{
+  "name": "deepbrain-space",
+  "sourceRoot": "apps/deepbrain.space/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run build",
+        "cwd": "apps/deepbrain.space"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run dev",
+        "cwd": "apps/deepbrain.space"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run lint",
+        "cwd": "apps/deepbrain.space"
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm run build:static && pnpm run deploy",
+        "cwd": "apps/deepbrain.space"
+      }
+    }
+  },
+  "tags": ["type:app", "framework:nextjs"]
+}
