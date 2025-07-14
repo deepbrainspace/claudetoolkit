@@ -1,5 +1,5 @@
 {
-  "name": "deepbrain-space",
+  "name": "deepbrain.space",
   "sourceRoot": "apps/deepbrain.space/src",
   "projectType": "application",
   "targets": {
