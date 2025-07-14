@@ -25,6 +25,12 @@ pub struct HookConfig {
 #[serde(rename_all = "kebab-case")]
 pub enum HookTrigger {
     Manual,
+    PreToolUse,
+    PostToolUse,
+    Notification,
+    Stop,
+    SubagentStop,
+    PreCompact,
     PreCommit,
     PostCommit,
     PrePush,
@@ -58,7 +64,7 @@ impl Default for ClaudeConfig {
         hooks.insert("pr-enhance".to_string(), HookConfig {
             command: "claude-toolkit pr-enhance".to_string(),
             description: "Enhance pull requests with AI analysis".to_string(),
-            trigger: HookTrigger::Manual,
+            trigger: HookTrigger::PostToolUse,
             enabled: Some(true),
             environment: None,
             timeout: Some(300), // 5 minutes
@@ -67,7 +73,7 @@ impl Default for ClaudeConfig {
         hooks.insert("commit-assist".to_string(), HookConfig {
             command: "claude-toolkit commit-assist --generate".to_string(),
             description: "Generate commit messages from staged changes".to_string(),
-            trigger: HookTrigger::PreCommit,
+            trigger: HookTrigger::PreToolUse,
             enabled: Some(true),
             environment: None,
             timeout: Some(60), // 1 minute
@@ -76,7 +82,7 @@ impl Default for ClaudeConfig {
         hooks.insert("ci-monitor".to_string(), HookConfig {
             command: "claude-toolkit ci-monitor --notify".to_string(),
             description: "Monitor CI/CD pipeline status".to_string(),
-            trigger: HookTrigger::Manual,
+            trigger: HookTrigger::PostToolUse,
             enabled: Some(true),
             environment: None,
             timeout: Some(1800), // 30 minutes
@@ -85,7 +91,7 @@ impl Default for ClaudeConfig {
         hooks.insert("branch-manager".to_string(), HookConfig {
             command: "claude-toolkit branch-manager".to_string(),
             description: "Manage branches with intelligent suggestions".to_string(),
-            trigger: HookTrigger::Manual,
+            trigger: HookTrigger::Stop,
             enabled: Some(true),
             environment: None,
             timeout: Some(120), // 2 minutes
@@ -94,7 +100,7 @@ impl Default for ClaudeConfig {
         hooks.insert("nx-optimizer".to_string(), HookConfig {
             command: "claude-toolkit nx-optimizer --suggest".to_string(),
             description: "Optimize NX workspace operations".to_string(),
-            trigger: HookTrigger::Manual,
+            trigger: HookTrigger::PreToolUse,
             enabled: Some(true),
             environment: None,
             timeout: Some(180), // 3 minutes
