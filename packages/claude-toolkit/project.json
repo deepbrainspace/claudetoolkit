@@ -1,0 +1,36 @@
+{
+  "name": "claude-toolkit",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/claude-toolkit/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@goodiebag/nx-rust:build",
+      "outputs": ["{projectRoot}/target/release/claude-toolkit"],
+      "options": {
+        "release": true,
+        "target-dir": "./target"
+      }
+    },
+    "test": {
+      "executor": "@goodiebag/nx-rust:test",
+      "dependsOn": ["lint"]
+    },
+    "lint": {
+      "executor": "@goodiebag/nx-rust:lint"
+    },
+    "fmt": {
+      "executor": "@goodiebag/nx-rust:fmt"
+    },
+    "check": {
+      "executor": "@goodiebag/nx-rust:check"
+    },
+    "run": {
+      "executor": "@goodiebag/nx-rust:run"
+    },
+    "clean": {
+      "executor": "@goodiebag/nx-rust:clean"
+    }
+  },
+  "tags": ["type:app", "platform:rust"]
+}

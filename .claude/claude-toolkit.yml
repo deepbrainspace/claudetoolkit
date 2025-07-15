@@ -1,0 +1,55 @@
+hooks:
+  branch-manager:
+    command: claude-toolkit branch-manager
+    description: Manage branches with intelligent suggestions
+    trigger: manual
+    enabled: true
+    environment: null
+    timeout: 120
+  commit-assist:
+    command: claude-toolkit commit-assist --generate
+    description: Generate commit messages from staged changes
+    trigger: pre-commit
+    enabled: true
+    environment: null
+    timeout: 60
+  ci-monitor:
+    command: claude-toolkit ci-monitor --notify
+    description: Monitor CI/CD pipeline status
+    trigger: manual
+    enabled: true
+    environment: null
+    timeout: 1800
+  pr-enhance:
+    command: claude-toolkit pr-enhance
+    description: Enhance pull requests with AI analysis
+    trigger: manual
+    enabled: true
+    environment: null
+    timeout: 300
+  nx-optimizer:
+    command: claude-toolkit nx-optimizer --suggest
+    description: Optimize NX workspace operations
+    trigger: manual
+    enabled: true
+    environment: null
+    timeout: 180
+mcp_servers:
+  memory:
+    command: npx
+    args:
+      - -y
+      - "@modelcontextprotocol/server-memory"
+    env: null
+  filesystem:
+    command: npx
+    args:
+      - -y
+      - "@modelcontextprotocol/server-filesystem"
+      - .
+    env: null
+settings:
+  debug: false
+  log_level: info
+  auto_install: true
+  claude_binary_path: null
