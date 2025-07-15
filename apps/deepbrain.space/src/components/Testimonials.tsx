@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { TestimonialType } from "@/types";
 
@@ -41,9 +42,11 @@ const Testimonials = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="w-16 h-16 rounded-full overflow-hidden mr-4">
-                  <img
+                  <Image
                     src={testimonial.image}
                     alt={testimonial.name}
+                    width={64}
+                    height={64}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -53,7 +56,9 @@ const Testimonials = () => {
                   <p className="text-gray-500">{testimonial.company}</p>
                 </div>
               </div>
-              <p className="text-gray-700 italic">"{testimonial.content}"</p>
+              <p className="text-gray-700 italic">
+                &ldquo;{testimonial.content}&rdquo;
+              </p>
             </motion.div>
           ))}
         </div>

@@ -13,7 +13,8 @@ const DemoPreview = () => {
             </div>
             <div className="flex-1 bg-gray-50 rounded-xl p-4">
               <p className="text-gray-700">
-                Hello! I'm your AI voice assistant. How can I help you today?
+                Hello! I&apos;m your AI voice assistant. How can I help you
+                today?
               </p>
             </div>
           </div>
@@ -26,7 +27,8 @@ const DemoPreview = () => {
             </div>
             <div className="flex-1 bg-blue-50 rounded-xl p-4">
               <p className="text-gray-700">
-                I'd like to know more about your business hours and services.
+                I&apos;d like to know more about your business hours and
+                services.
               </p>
             </div>
           </div>
@@ -39,9 +41,9 @@ const DemoPreview = () => {
             </div>
             <div className="flex-1 bg-gray-50 rounded-xl p-4">
               <p className="text-gray-700">
-                We're open 24/7! Our services include customer support, sales
-                assistance, and appointment scheduling. What specific service
-                are you interested in?
+                We&apos;re open 24/7! Our services include customer support,
+                sales assistance, and appointment scheduling. What specific
+                service are you interested in?
               </p>
             </div>
           </div>
